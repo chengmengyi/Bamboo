@@ -13,13 +13,19 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import com.blankj.utilcode.util.ActivityUtils
 import com.demo.bamboo.R
+import com.demo.bamboo.admob.LoadAdUtil
+import com.demo.bamboo.admob.ShowFullAd
+import com.demo.bamboo.admob.ShowNativeAd
 import com.demo.bamboo.base.BasePage
+import com.demo.bamboo.conf.Fire
 import com.demo.bamboo.conf.Local
 import com.demo.bamboo.interfaces.AppHomeInterface
 import com.demo.bamboo.interfaces.ServerStatusInterface
+import com.demo.bamboo.interfaces.ServerTimeInterface
 import com.demo.bamboo.server.ServerTime
 import com.demo.bamboo.server.ServerUtil
 import com.demo.bamboo.server.ServerUtil.connectServerSuccess
+import com.demo.bamboo.tba.SetPointUtil
 import com.demo.bamboo.util.*
 import com.github.shadowsocks.bg.BaseService
 import com.github.shadowsocks.utils.StartService
@@ -29,18 +35,23 @@ import kotlinx.android.synthetic.main.home_drawer.*
 import kotlinx.coroutines.*
 import java.lang.Exception
 
-class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface {
+class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface, ServerTimeInterface {
     private var time=-1
     private var canClick=true
     private var permission=false
     private var connect=false
+    private var autoConnect=false
     private var connectServerJob: Job?=null
     private var objectAnimator: ObjectAnimator?=null
+
+    private val showHomeAd by lazy { ShowNativeAd(Local.HOME,this) }
+    private val showConnectAd by lazy { ShowFullAd(Local.CONNECT,this) }
 
     private val registerResult=registerForActivityResult(StartService()) {
         if (!it && permission) {
             permission = false
             startConnectServer()
+            SetPointUtil.point("bamboo_v_get")
         } else {
             canClick=true
             showToast("Connected fail")
@@ -54,11 +65,26 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface {
         ServerUtil.init(this,this)
         AppUtil.setIAppFrontInterface(this)
         updateServerInfoUI()
+        ServerTime.setInterface(this)
         setClickListener()
         if (ServerUtil.isConnected()){
             hideGuide()
         }
+        checkAuto(intent)
     }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.let { checkAuto(it) }
+    }
+
+    private fun checkAuto(intent: Intent){
+        if(intent.getBooleanExtra("autoConnect",false)){
+            autoConnect=true
+            clickConnectBtn()
+        }
+    }
+
 
     private fun setClickListener(){
         iv_set.setOnClickListener {
@@ -72,6 +98,9 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface {
         iv_choose_server.setOnClickListener {
             if(canClick&&!drawer_layout.isOpen){
                 startActivityForResult(Intent(this,ServerPage::class.java),417)
+//                HttpUtil.getServerList(supportFragmentManager){
+//
+//                }
             }
             if (!connect&&ServerUtil.isConnected()){
                 appToHome()
@@ -111,6 +140,9 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface {
     }
 
     private fun clickConnectBtn(){
+        if(!autoConnect){
+            SetPointUtil.point("bamboo_v_click")
+        }
         hideGuide()
         if(LimitUtil.isLimitUser){
             AlertDialog.Builder(this).apply {
@@ -129,6 +161,8 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface {
             return
         }
         canClick=false
+        LoadAdUtil.loadAd(Local.CONNECT)
+        LoadAdUtil.loadAd(Local.RESULT)
         if(ServerUtil.isConnected()){
             updateConnectingUI()
             startConnectServerJob(false)
@@ -156,6 +190,7 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface {
     private fun startConnectServer(){
         updateConnectingUI()
         ServerTime.resetTime()
+        SetPointUtil.point("bamboo_v_start")
         startConnectServerJob(true)
     }
 
@@ -171,7 +206,8 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface {
                 time++
                 if (time==3){
                     if (connect){
-                        ServerUtil.connect()
+                        ServerUtil.connect(autoConnect)
+                        autoConnect=false
                     }else{
                         ServerUtil.disconnect()
                     }
@@ -179,24 +215,22 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface {
 
                 if (time in 3..9){
                     if (connectServerSuccess(connect)){
-                        cancel()
-                        connectJobFinish(connect)
-//                        if(null!=LoadAd.getAd(LoadAd.CONNECT)){
-//                            cancel()
-//                            showOpenAd.showOpenAd(
-//                                showing = {
-//                                    connectJobFinish(connect,toResult = false)
-//                                },
-//                                close = {
-//                                    connectJobFinish(connect)
-//                                }
-//                            )
-//                        }else{
-//                            if(LimitManger.hasLimit()){
-//                                cancel()
-//                                connectJobFinish(connect)
-//                            }
-//                        }
+                        if(null!=LoadAdUtil.getAdByType(Local.CONNECT)){
+                            cancel()
+                            showConnectAd.showFull(
+                                showing = {
+                                    connectJobFinish(connect,toResult = false)
+                                },
+                                close = {
+                                    connectJobFinish(connect)
+                                }
+                            )
+                        }else{
+                            if(LimitUtil.hasLimit()||Fire.checkBlackLimitInterAd(Local.CONNECT)||Fire.checkFireConfigLimitInterAd()){
+                                cancel()
+                                connectJobFinish(connect)
+                            }
+                        }
                     }
                 }else if (time >= 10) {
                     cancel()
@@ -216,6 +250,9 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface {
         runOnUiThread {
             if (connectServerSuccess(connect)){
                 if (connect){
+                    if(toResult){
+                        SetPointUtil.point("bamboo_v_win")
+                    }
                     updateConnectedUI()
                 }else{
                     updateStoppedUI()
@@ -230,6 +267,9 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface {
                     })
                 }
             }else{
+                if (toResult){
+                    SetPointUtil.point("bamboo_v_fail")
+                }
                 updateStoppedUI()
                 showToast(if (connect) "Connect Fail" else "Disconnect Fail")
             }
@@ -240,8 +280,8 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface {
 
     private fun updateServerInfoUI(){
         val currentServer = ServerUtil.currentServer
-        tv_name.text=currentServer.country
-        iv_logo.setImageResource(getServerLogo(currentServer.country))
+        tv_name.text=currentServer.bamboo_ry
+        iv_logo.setImageResource(getServerLogo(currentServer.bamboo_ry))
     }
 
     private fun updateConnectingUI(){
@@ -254,6 +294,7 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface {
     private fun updateConnectedUI(){
         stopObjectAnimator()
         view_connect.isSelected=true
+        tv_time.isSelected=true
         iv_center.setImageResource(R.drawable.connected)
         iv_connect_status.setImageResource(R.drawable.home4)
     }
@@ -261,6 +302,8 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface {
     private fun updateStoppedUI(){
         stopObjectAnimator()
         view_connect.isSelected=false
+        tv_time.isSelected=false
+        tv_time.text="00:00:00"
         iv_center.setImageResource(R.drawable.connect)
         iv_connect_status.setImageResource(R.drawable.home2)
     }
@@ -343,12 +386,25 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface {
         guide_view.show(false)
     }
 
+    override fun onResume() {
+        super.onResume()
+        showHomeAd.loopCheckNativeAd()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         ServerUtil.onDestroy()
         stopObjectAnimator()
         stopConnectServerJob()
         AppUtil.setIAppFrontInterface(null)
+        showHomeAd.stopLoop()
+        Fire.coldLoad=false
+        ServerTime.setInterface(this)
+        LimitUtil.setRefreshStatus(Local.HOME,true)
+    }
+
+    override fun connectTime(time: String) {
+        tv_time.text=time
     }
 
 }

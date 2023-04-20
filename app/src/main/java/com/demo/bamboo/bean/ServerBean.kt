@@ -4,19 +4,20 @@ import com.github.shadowsocks.database.Profile
 import com.github.shadowsocks.database.ProfileManager
 
 class ServerBean(
-    val pwd:String="",
-    val account:String="",
-    val port:Int=0,
-    val country:String="Smart Location",
-    val city:String="",
-    val ip:String="",
+    val bamboo_pd:String="",
+    val bamboo_enc:String="",
+    val bamboo_por:Int=0,
+    val bamboo_ry:String="Smart Location",
+    val bamboo_ci:String="",
+    val bamboo_ip:String="",
+    val isLocal:Boolean=false
 ) {
 
-    fun isSuperFast()=country=="Smart Location"&&ip.isEmpty()
+    fun isSuperFast()=bamboo_ry=="Smart Location"&&bamboo_ip.isEmpty()
 
     fun getServerId():Long{
         ProfileManager.getActiveProfiles()?.forEach {
-            if (it.host==ip&&it.remotePort==port){
+            if (it.host==bamboo_ip&&it.remotePort==bamboo_por){
                 return it.id
             }
         }
@@ -26,11 +27,11 @@ class ServerBean(
     fun writeServerId(){
         val profile = Profile(
             id = 0L,
-            name = "$country - $city",
-            host = ip,
-            remotePort = port,
-            password = pwd,
-            method = account
+            name = "$bamboo_ry - $bamboo_ci",
+            host = bamboo_ip,
+            remotePort = bamboo_por,
+            password = bamboo_pd,
+            method = bamboo_enc
         )
 
         var id:Long?=null

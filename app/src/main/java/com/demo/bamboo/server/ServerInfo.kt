@@ -16,7 +16,7 @@ object ServerInfo {
     fun getRandomServer():ServerBean{
         val serverList = getAllServer()
         if (!cityList.isNullOrEmpty()){
-            val filter = serverList.filter { cityList.contains(it.city) }
+            val filter = serverList.filter { cityList.contains(it.bamboo_ci) }
             if (!filter.isNullOrEmpty()){
                 return filter.random()
             }

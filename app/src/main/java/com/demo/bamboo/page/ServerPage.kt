@@ -7,29 +7,34 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.demo.bamboo.R
 import com.demo.bamboo.adapter.ServerAdapter
+import com.demo.bamboo.admob.LoadAdUtil
+import com.demo.bamboo.admob.ShowFullAd
 import com.demo.bamboo.base.BasePage
 import com.demo.bamboo.bean.ServerBean
+import com.demo.bamboo.conf.Local
 import com.demo.bamboo.server.ServerUtil
 import kotlinx.android.synthetic.main.activity_server.*
 
 class ServerPage:BasePage() {
+    private val showBackAd by lazy { ShowFullAd(Local.BACK,this) }
+
     override fun layout(): Int = R.layout.activity_server
 
     override fun initView() {
         immersionBar.statusBarView(top).init()
-
+        LoadAdUtil.loadAd(Local.BACK)
         server_list.apply {
             layoutManager=LinearLayoutManager(this@ServerPage)
             adapter=ServerAdapter(this@ServerPage){ click(it) }
         }
 
-        iv_back.setOnClickListener { finish() }
+        iv_back.setOnClickListener { onBackPressed() }
     }
 
     private fun click(serverBean: ServerBean){
         val current = ServerUtil.currentServer
         val connected = ServerUtil.isConnected()
-        if(connected&&current.ip!=serverBean.ip){
+        if(connected&&current.bamboo_ip!=serverBean.bamboo_ip){
             AlertDialog.Builder(this).apply {
                 setMessage("If you want to connect to another VPN, you need to disconnect the current connection first. Do you want to disconnect the current connection?")
                 setPositiveButton("Sure", object :OnClickListener{
@@ -56,5 +61,15 @@ class ServerPage:BasePage() {
             putExtra("action",action)
         })
         finish()
+    }
+
+    override fun onBackPressed() {
+        showBackAd.showFull(
+            emptyBack = true,
+            showing = {},
+            close = {
+                finish()
+            }
+        )
     }
 }

@@ -39,9 +39,9 @@ class ServerAdapter(
         with(holder.itemView){
             item_layout.isSelected=position%2==0
             val serverBean = list[position]
-            tv_name.text=serverBean.country
-            iv_logo.setImageResource(getServerLogo(serverBean.country))
-            iv_sel.isSelected=serverBean.ip==ServerUtil.currentServer.ip
+            tv_name.text=serverBean.bamboo_ry
+            iv_logo.setImageResource(getServerLogo(serverBean.bamboo_ry))
+            iv_sel.isSelected=serverBean.bamboo_ip==ServerUtil.currentServer.bamboo_ip
         }
     }
 }

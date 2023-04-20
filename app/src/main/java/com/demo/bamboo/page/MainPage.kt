@@ -3,45 +3,75 @@ package com.demo.bamboo.page
 import android.animation.ValueAnimator
 import android.content.Intent
 import android.view.animation.LinearInterpolator
-import androidx.core.animation.doOnEnd
 import com.demo.bamboo.R
+import com.demo.bamboo.admob.LoadAdUtil
+import com.demo.bamboo.admob.ShowFullAd
 import com.demo.bamboo.base.BasePage
+import com.demo.bamboo.conf.Fire
+import com.demo.bamboo.conf.Fire.coldLoad
+import com.demo.bamboo.conf.Local
+import com.demo.bamboo.server.ServerUtil
+import com.demo.bamboo.tba.SetPointUtil
+import com.demo.bamboo.util.HttpUtil
 import com.demo.bamboo.util.LimitUtil
+import com.demo.bamboo.util.ReferUtil
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainPage : BasePage() {
     private var animator: ValueAnimator?=null
+    private val showOpenAd by lazy { ShowFullAd(Local.OPEN,this) }
 
     override fun layout(): Int = R.layout.activity_main
 
     override fun initView() {
+        if(coldLoad){
+            coldLoad=intent.getBooleanExtra("cold",true)
+        }
+        HttpUtil.checkCloak()
+        ReferUtil.readReferrer()
         LimitUtil.checkLimit()
+        LimitUtil.resetRefresh()
+        LimitUtil.readNum()
+        LoadAdUtil.preloadAd()
         startAnimator()
     }
 
     private fun startAnimator(){
         animator = ValueAnimator.ofInt(0, 100).apply {
-            duration = 3000L
+            duration = 10000L
             interpolator = LinearInterpolator()
             addUpdateListener {
                 val progress = it.animatedValue as Int
                 progress_view.progress = progress
                 val pro = (10 * (progress / 100.0F)).toInt()
-
+                if(pro in 2..9){
+                    showOpenAd.showFull(
+                        showing = {
+                            stopAnimator()
+                            progress_view.progress = 100
+                        },
+                        close = {
+                            checkPlan()
+                        }
+                    )
+                }else if (pro>=10){
+                    checkPlan()
+                }
             }
-            doOnEnd { toHomeAc() }
             start()
         }
     }
 
     private fun checkPlan(){
-//        if(!ReferrerUtil.isBuyUser()){
-//            toHomeAc()
-//            return
-//        }
-//        FireConf.checkIsPlanB(coldLoad)
-//        PointSet.setUserProperty()
-//        toHomeAc(autoConnect = FireConf.isPlanB&&ConnectUtil.isDisconnected())
+        if(ReferUtil.isBuyUser()||ReferUtil.isFB()){
+            Fire.checkIsPlanB()
+            if(Fire.isPlanB){
+                SetPointUtil.point("bamboo_plan")
+            }
+            toHomeAc(autoConnect = Fire.isPlanB&&ServerUtil.isDisconnected())
+        }else{
+            toHomeAc()
+        }
     }
 
     private fun toHomeAc(autoConnect:Boolean=false){

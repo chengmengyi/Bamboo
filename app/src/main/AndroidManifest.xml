@@ -29,6 +29,10 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".page.WebPage"
             android:screenOrientation="portrait"/>
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_id" />
     </application>
 
 </manifest>

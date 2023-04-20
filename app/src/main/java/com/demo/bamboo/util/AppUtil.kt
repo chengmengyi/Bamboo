@@ -8,6 +8,7 @@ import com.blankj.utilcode.util.ActivityUtils
 import com.demo.bamboo.interfaces.AppHomeInterface
 import com.demo.bamboo.page.HomePage
 import com.demo.bamboo.page.MainPage
+import com.google.android.gms.ads.AdActivity
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -57,7 +58,7 @@ object AppUtil {
                     delay(3000L)
                     hotReload=true
                     ActivityUtils.finishActivity(MainPage::class.java)
-//                    ActivityUtils.finishActivity(AdActivity::class.java)
+                    ActivityUtils.finishActivity(AdActivity::class.java)
                 }
             }
         }

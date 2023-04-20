@@ -66,4 +66,9 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_status"
         android:textColor="@drawable/connect_time_color_selector"/>
+    <include android:layout_width="match_parent"
+        android:layout_height="328dp"
+        layout="@layout/result_ad"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

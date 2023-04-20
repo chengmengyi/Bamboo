@@ -1,8 +1,12 @@
 package com.demo.bamboo.server
 
+import android.os.Bundle
+import com.demo.bamboo.admob.LoadAdUtil
 import com.demo.bamboo.base.BasePage
 import com.demo.bamboo.bean.ServerBean
+import com.demo.bamboo.conf.Fire
 import com.demo.bamboo.interfaces.ServerStatusInterface
+import com.demo.bamboo.tba.SetPointUtil
 import com.github.shadowsocks.Core
 import com.github.shadowsocks.aidl.IShadowsocksService
 import com.github.shadowsocks.aidl.ShadowsocksConnection
@@ -13,6 +17,7 @@ import kotlinx.coroutines.launch
 
 object ServerUtil: ShadowsocksConnection.Callback {
     private var connecting=false
+    private var autoConnect=false
     private var basePage:BasePage?=null
     var state = BaseService.State.Stopped
     var currentServer= ServerBean()
@@ -27,7 +32,8 @@ object ServerUtil: ShadowsocksConnection.Callback {
         sc.connect(basePage,this)
     }
 
-    fun connect(){
+    fun connect(autoConnect: Boolean){
+        this.autoConnect=autoConnect
         state= BaseService.State.Connecting
         GlobalScope.launch {
             if (currentServer.isSuperFast()){
@@ -59,9 +65,15 @@ object ServerUtil: ShadowsocksConnection.Callback {
         if (isConnected()){
             lastServer= currentServer
             ServerTime.start()
+            if(autoConnect&&Fire.isPlanB){
+                LoadAdUtil.connectSuccessPlanB()
+            }
         }
         if (isDisconnected()){
             ServerTime.end()
+            val bundle = Bundle()
+            bundle.putLong("time",ServerTime.getTimeInt())
+            SetPointUtil.point("bamboo_v_time",bundle=bundle)
             serverStatusInterface?.disconnectSuccess()
         }
     }

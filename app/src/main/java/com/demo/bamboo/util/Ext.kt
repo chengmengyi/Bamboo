@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.Toast
 import com.demo.bamboo.BuildConfig
 import com.demo.bamboo.R
+import com.tencent.mmkv.MMKV
 
 
 fun bambooLog(string: String,tag:String="qwer"){
@@ -80,3 +81,46 @@ fun Context.getNetStatus(): Int {
 }
 
 fun String.limitArea()=contains("IR")||contains("MO")||contains("HK")||contains("CN")
+
+fun saveNoReferrerTag(){
+    MMKV.defaultMMKV().encode("bamboo_install_no_referrer",1)
+}
+
+fun uploadNoReferrerTag()= MMKV.defaultMMKV().decodeInt("bamboo_install_no_referrer")==1
+
+fun saveHasReferrerTag(){
+    MMKV.defaultMMKV().encode("bamboo_install_has_referrer",1)
+}
+
+fun uploadHasReferrerTag()= MMKV.defaultMMKV().decodeInt("bamboo_install_has_referrer")==1
+
+fun getAdNetWork(string: String):String{
+    if(string.contains("facebook")) return "facebook"
+    else if(string.contains("admob")) return "admob"
+    return ""
+}
+
+fun getAdType(adType: String):String{
+    when(adType){
+        "open"->return "open"
+        "interstitial"->return "Interstitial"
+        "native"->return "native"
+    }
+    return ""
+}
+
+fun getPrecisionType(precisionType:Int)=when(precisionType){
+    1->"ESTIMATED"
+    2->"PUBLISHER_PROVIDED"
+    3->"PRECISE"
+    else->"UNKNOWN"
+}
+
+fun str2Int(string: String):Int{
+    try {
+        return string.toInt()
+    }catch (e:Exception){
+
+    }
+    return 0
+}

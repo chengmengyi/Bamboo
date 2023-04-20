@@ -38,6 +38,8 @@ object ServerTime {
         job=null
     }
 
+    fun getTimeInt()=time
+
     fun getTotalTime()=transTime(time)
 
     private fun transTime(t:Long):String{
