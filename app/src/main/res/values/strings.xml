@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Bamboo</string>
+    <string name="facebook_app_id" translatable="false">593080682882862</string>
 </resources>
