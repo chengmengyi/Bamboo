@@ -107,15 +107,15 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface, ServerTimeIn
             }
         }
         view_connect.setOnClickListener { clickConnectBtn() }
-        llc_contact.setOnClickListener {
-            try {
-                val uri = Uri.parse("mailto:${Local.EMAIL}")
-                val intent = Intent(Intent.ACTION_SENDTO, uri)
-                startActivity(intent)
-            }catch (e: Exception){
-                showToast("Contact us by email：${Local.EMAIL}")
-            }
-        }
+//        llc_contact.setOnClickListener {
+//            try {
+//                val uri = Uri.parse("mailto:${Local.EMAIL}")
+//                val intent = Intent(Intent.ACTION_SENDTO, uri)
+//                startActivity(intent)
+//            }catch (e: Exception){
+//                showToast("Contact us by email：${Local.EMAIL}")
+//            }
+//        }
         llc_update.setOnClickListener {
             val packName = packageManager.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES).packageName
             val intent = Intent(Intent.ACTION_VIEW).apply {

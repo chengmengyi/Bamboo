@@ -8,6 +8,9 @@ import com.demo.bamboo.tba.UploadTba
 import com.demo.bamboo.util.AppUtil
 import com.demo.bamboo.util.processName
 import com.github.shadowsocks.Core
+import com.google.android.gms.ads.MobileAds
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.ktx.initialize
 import com.tencent.mmkv.MMKV
 
 lateinit var bambooApp:BambooApp
@@ -19,6 +22,8 @@ class BambooApp:Application() {
         if (!packageName.equals(processName(this))){
             return
         }
+        Firebase.initialize(this)
+        MobileAds.initialize(this)
         MMKV.initialize(this)
         AppUtil.register(this)
         Fire.readFire()

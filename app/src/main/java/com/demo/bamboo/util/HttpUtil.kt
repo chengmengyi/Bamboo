@@ -22,7 +22,7 @@ object HttpUtil {
     var countryCode=""
     private val countryList= arrayListOf<CountryBean>()
 
-    private const val TBA_URL="https://test-little.bambooconnection.net/foolish/titanate"
+    private const val TBA_URL="https://little.bambooconnection.net/buddhist/trespass/allergy/liaison"
     private const val SERVER_URL="https://test.superfastbamboo.com"
     private const val CLOAK_URL="https://decry.bambooconnection.net/calendar/woven/parka"
 
