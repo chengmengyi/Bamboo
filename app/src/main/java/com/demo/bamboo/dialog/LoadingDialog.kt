@@ -1,4 +1,4 @@
-package com.demo.newvpn.dialog
+package com.demo.bamboo.dialog
 
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
@@ -12,8 +12,9 @@ import androidx.fragment.app.DialogFragment
 import com.demo.bamboo.R
 import com.gyf.immersionbar.ImmersionBar
 import kotlinx.android.synthetic.main.layout_loading_dialog.*
+import kotlinx.coroutines.*
 
-class LoadingDialog: DialogFragment() {
+class LoadingDialog(private val close:()->Unit): DialogFragment() {
     private var objectAnimator: ObjectAnimator?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +44,14 @@ class LoadingDialog: DialogFragment() {
             repeatCount= ValueAnimator.INFINITE
             repeatMode= ObjectAnimator.RESTART
             start()
+        }
+
+        GlobalScope.launch {
+            delay(2000L)
+            withContext(Dispatchers.Main){
+                dismiss()
+                close.invoke()
+            }
         }
     }
 

@@ -22,6 +22,7 @@ import com.demo.bamboo.conf.Local
 import com.demo.bamboo.interfaces.AppHomeInterface
 import com.demo.bamboo.interfaces.ServerStatusInterface
 import com.demo.bamboo.interfaces.ServerTimeInterface
+import com.demo.bamboo.server.ServerInfo
 import com.demo.bamboo.server.ServerTime
 import com.demo.bamboo.server.ServerUtil
 import com.demo.bamboo.server.ServerUtil.connectServerSuccess
@@ -50,7 +51,7 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface, ServerTimeIn
     private val registerResult=registerForActivityResult(StartService()) {
         if (!it && permission) {
             permission = false
-            startConnectServer()
+            checkServerIsFast()
             SetPointUtil.point("bamboo_v_get")
         } else {
             canClick=true
@@ -97,10 +98,9 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface, ServerTimeIn
         }
         iv_choose_server.setOnClickListener {
             if(canClick&&!drawer_layout.isOpen){
-                startActivityForResult(Intent(this,ServerPage::class.java),417)
-//                HttpUtil.getServerList(supportFragmentManager){
-//
-//                }
+                ServerInfo.checkToServerPage(supportFragmentManager){
+                    startActivityForResult(Intent(this,ServerPage::class.java),417)
+                }
             }
             if (!connect&&ServerUtil.isConnected()){
                 appToHome()
@@ -183,6 +183,16 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface, ServerTimeIn
                 return
             }
 
+            checkServerIsFast()
+        }
+    }
+
+    private fun checkServerIsFast(){
+        if (ServerUtil.currentServer.isSuperFast()){
+            ServerInfo.checkHasFast(supportFragmentManager){
+                startConnectServer()
+            }
+        }else{
             startConnectServer()
         }
     }

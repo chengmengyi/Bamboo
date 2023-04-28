@@ -27,6 +27,7 @@ class MainPage : BasePage() {
         if(coldLoad){
             coldLoad=intent.getBooleanExtra("cold",true)
         }
+        HttpUtil.getServerList()
         HttpUtil.checkCloak()
         ReferUtil.readReferrer()
         LimitUtil.checkLimit()

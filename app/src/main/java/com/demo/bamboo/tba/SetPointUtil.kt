@@ -20,9 +20,4 @@ object SetPointUtil {
         bambooLog("point==$key==")
         remoteConfig?.logEvent(key,bundle)
     }
-
-    fun setUserProperty(user:String=if (Fire.isPlanB) "B" else "A"){
-        bambooLog("point==setUserProperty==${user}")
-        remoteConfig?.setUserProperty("moon_user",user)
-    }
 }

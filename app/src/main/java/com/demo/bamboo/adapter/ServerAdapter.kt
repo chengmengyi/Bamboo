@@ -15,14 +15,15 @@ import kotlinx.android.synthetic.main.item_server.view.*
 
 class ServerAdapter(
     private val context: Context,
+    private val list:ArrayList<ServerBean>,
     private val click:(serverBean:ServerBean)->Unit
 ):Adapter<ServerAdapter.ServerView>() {
-    private val list= arrayListOf<ServerBean>()
-    init {
-        list.add(ServerBean())
-        list.addAll(ServerInfo.getAllServer())
-    }
-    
+//    private val list= arrayListOf<ServerBean>()
+//    init {
+//        list.add(ServerBean())
+//        list.addAll(ServerInfo.getAllServer())
+//    }
+//
     inner class ServerView(view:View):ViewHolder(view){
         init {
             view.setOnClickListener { click.invoke(list[layoutPosition]) }

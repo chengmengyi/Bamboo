@@ -37,8 +37,11 @@ object ServerUtil: ShadowsocksConnection.Callback {
         state= BaseService.State.Connecting
         GlobalScope.launch {
             if (currentServer.isSuperFast()){
-                fastServer=ServerInfo.getRandomServer()
-                DataStore.profileId = fastServer.getServerId()
+                val fast = ServerInfo.getFastServer()
+                if(null!=fast){
+                    fastServer=fast
+                    DataStore.profileId = fastServer.getServerId()
+                }
             }else{
                 DataStore.profileId = currentServer.getServerId()
             }

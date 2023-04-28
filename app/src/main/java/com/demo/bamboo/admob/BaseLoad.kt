@@ -134,7 +134,7 @@ abstract class BaseLoad {
         if (ServerUtil.currentServer.isSuperFast()){
             ServerUtil.fastServer.bamboo_ip
         }else{
-            ServerUtil.fastServer.bamboo_ip
+            ServerUtil.currentServer.bamboo_ip
         }
     }else{
         HttpUtil.ip

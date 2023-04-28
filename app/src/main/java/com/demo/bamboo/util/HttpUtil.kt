@@ -3,13 +3,11 @@ package com.demo.bamboo.util
 import android.util.Base64
 import android.util.Log
 import android.webkit.WebView
-import androidx.fragment.app.FragmentManager
 import com.demo.bamboo.bambooApp
-import com.demo.bamboo.bean.CountryBean
 import com.demo.bamboo.conf.Fire
-import com.demo.bamboo.conf.Local.localCountryList
+import com.demo.bamboo.server.ServerInfo.loadingServer
+import com.demo.bamboo.server.ServerInfo.parseServerJson
 import com.demo.bamboo.tba.TbaInfo
-import com.demo.newvpn.dialog.LoadingDialog
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.callback.StringCallback
 import com.lzy.okgo.model.Response
@@ -20,7 +18,6 @@ import org.json.JSONObject
 object HttpUtil {
     var ip=""
     var countryCode=""
-    private val countryList= arrayListOf<CountryBean>()
 
     private const val TBA_URL="https://test-little.bambooconnection.net/foolish/titanate"
     private const val SERVER_URL="https://test.superfastbamboo.com"
@@ -51,7 +48,6 @@ object HttpUtil {
 
     fun uploadEvent(jsonObject: JSONObject,install:Boolean=false){
         val path="$TBA_URL?befallen=${System.currentTimeMillis()}&incite=${TbaInfo.getAndroidId(bambooApp)}&gershwin=${TbaInfo.getBrand()}"
-        Log.e("qwera",jsonObject.toString())
         var gaid=""
         runCatching {
             gaid=jsonObject.getJSONObject("coulter").optString("comply")
@@ -87,7 +83,7 @@ object HttpUtil {
             GlobalScope.launch {
                 val gaid = TbaInfo.getGaid(bambooApp)
                 val path="$CLOAK_URL?upgrade=${TbaInfo.getDistinctId(bambooApp)}&lumbago=${ip}&rode=${System.currentTimeMillis()}&alderman=${TbaInfo.getDeviceModel()}&manage=${TbaInfo.getBundleId(
-                    bambooApp)}&enoch${TbaInfo.getOsVersion()}&comply=$gaid&incite=${TbaInfo.getAndroidId(
+                    bambooApp)}&enoch=${TbaInfo.getOsVersion()}&comply=$gaid&incite=${TbaInfo.getAndroidId(
                     bambooApp)}&hairdo=weston&embolden=${TbaInfo.getAppVersion(bambooApp)}&gershwin=${TbaInfo.getBrand()}&lewd=${TbaInfo.getOperator(
                     bambooApp)}"
                 OkGo.get<String>(path)
@@ -106,45 +102,35 @@ object HttpUtil {
         }
     }
 
-    fun getServerList(manager: FragmentManager, callback: (list:ArrayList<CountryBean>) -> Unit){
-        if(countryList.isEmpty()){
-            var loadingDialog= LoadingDialog()
-            loadingDialog.show(manager,"LoadingDialog")
-            OkGo.get<String>("$SERVER_URL/swmz/sok/")
-                .headers("QML", TbaInfo.getOsCountry())
-                .headers("SOA", bambooApp.packageName)
-                .headers("LASO",TbaInfo.getAndroidId(bambooApp))
-                .execute(object : StringCallback(){
-                    override fun onSuccess(response: Response<String>?) {
-                        loadingDialog.dismiss()
-                        decodeServerStr(response?.body()?.toString()?:"")
-//                        parseServerListJson(decodeServerStr(response?.body()?.toString()?:""))
-                        if(countryList.isEmpty()){
-                            callback.invoke(localCountryList)
-                        }else{
-                            callback.invoke(countryList)
-                        }
-                    }
-
-                    override fun onError(response: Response<String>?) {
-                        super.onError(response)
-                        loadingDialog.dismiss()
-                        callback.invoke(localCountryList)
-                    }
-                })
-        }else{
-            callback.invoke(countryList)
+    fun getServerList(){
+        if(loadingServer){
+            return
         }
+        loadingServer=true
+        OkGo.get<String>("$SERVER_URL/axl/dffg/")
+            .headers("QML", TbaInfo.getOsCountry())
+            .headers("SOA", bambooApp.packageName)
+            .headers("LASO", TbaInfo.getAndroidId(bambooApp))
+            .execute(object : StringCallback(){
+                override fun onSuccess(response: Response<String>?) {
+                    loadingServer=false
+                    parseServerJson(decodeServerStr(response?.body()?.toString()?:""))
+                }
+
+                override fun onError(response: Response<String>?) {
+                    super.onError(response)
+                    loadingServer=false
+//                    Log.e("qwera","===onError=${response?.body()?.toString()}")
+                }
+            })
     }
 
 
     private fun decodeServerStr(string: String):String{
         var stringBuffer = StringBuffer(string)
-        bambooLog("=====kk:${stringBuffer.toString()}")
         runCatching {
             stringBuffer=stringBuffer.delete(0,3).delete(stringBuffer.length-4,stringBuffer.length)
-            String(Base64.decode(stringBuffer.reverse().toString(), Base64.DEFAULT))
-            bambooLog("=====kk:${stringBuffer.toString()}")
+            return String(Base64.decode(stringBuffer.reverse().toString(), Base64.DEFAULT))
         }
         return stringBuffer.toString()
     }

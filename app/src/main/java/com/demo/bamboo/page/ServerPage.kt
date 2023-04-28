@@ -12,6 +12,7 @@ import com.demo.bamboo.admob.ShowFullAd
 import com.demo.bamboo.base.BasePage
 import com.demo.bamboo.bean.ServerBean
 import com.demo.bamboo.conf.Local
+import com.demo.bamboo.server.ServerInfo
 import com.demo.bamboo.server.ServerUtil
 import kotlinx.android.synthetic.main.activity_server.*
 
@@ -25,7 +26,7 @@ class ServerPage:BasePage() {
         LoadAdUtil.loadAd(Local.BACK)
         server_list.apply {
             layoutManager=LinearLayoutManager(this@ServerPage)
-            adapter=ServerAdapter(this@ServerPage){ click(it) }
+            adapter=ServerAdapter(this@ServerPage,ServerInfo.getAllServerList()){ click(it) }
         }
 
         iv_back.setOnClickListener { onBackPressed() }
