@@ -7,7 +7,11 @@ import com.demo.bamboo.server.ServerInfo
 import com.demo.bamboo.tba.UploadTba
 import com.demo.bamboo.util.AppUtil
 import com.demo.bamboo.util.processName
+import com.facebook.FacebookSdk
 import com.github.shadowsocks.Core
+import com.google.android.gms.ads.MobileAds
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.ktx.initialize
 import com.tencent.mmkv.MMKV
 
 lateinit var bambooApp:BambooApp
@@ -19,10 +23,13 @@ class BambooApp:Application() {
         if (!packageName.equals(processName(this))){
             return
         }
+        FacebookSdk.sdkInitialize(this)
+        Firebase.initialize(this)
+        MobileAds.initialize(this)
         MMKV.initialize(this)
         AppUtil.register(this)
         Fire.readFire()
-        ServerInfo.writeLocalServer()
+//        ServerInfo.writeLocalServer()
         UploadTba.uploadTba()
     }
 }

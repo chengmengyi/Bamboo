@@ -40,7 +40,11 @@ class ServerAdapter(
         with(holder.itemView){
             item_layout.isSelected=position%2==0
             val serverBean = list[position]
-            tv_name.text=serverBean.bamboo_ry
+            tv_name.text=if(serverBean.isSuperFast()){
+                serverBean.bamboo_ry
+            }else{
+                "${serverBean.bamboo_ry} - ${serverBean.bamboo_ci}"
+            }
             iv_logo.setImageResource(getServerLogo(serverBean.bamboo_ry))
             iv_sel.isSelected=serverBean.bamboo_ip==ServerUtil.currentServer.bamboo_ip
         }
