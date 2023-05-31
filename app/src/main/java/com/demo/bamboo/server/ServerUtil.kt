@@ -7,6 +7,7 @@ import com.demo.bamboo.bean.ServerBean
 import com.demo.bamboo.conf.Fire
 import com.demo.bamboo.interfaces.ServerStatusInterface
 import com.demo.bamboo.tba.SetPointUtil
+import com.demo.bamboo.util.HttpUtil
 import com.github.shadowsocks.Core
 import com.github.shadowsocks.aidl.IShadowsocksService
 import com.github.shadowsocks.aidl.ShadowsocksConnection
@@ -63,6 +64,9 @@ object ServerUtil: ShadowsocksConnection.Callback {
 
     fun connectServerSuccess(connect: Boolean)=if (connect) isConnected() else isDisconnected()
 
+    fun getConnectedCurrentIp()=if (currentServer.isSuperFast()) fastServer.bamboo_ip else currentServer.bamboo_ip
+
+
     override fun stateChanged(state: BaseService.State, profileName: String?, msg: String?) {
         this.state=state
         if (isConnected()){
@@ -71,12 +75,14 @@ object ServerUtil: ShadowsocksConnection.Callback {
             if(autoConnect&&Fire.isPlanB){
                 LoadAdUtil.connectSuccessPlanB()
             }
+            HttpUtil.checkHeartBeat(true)
         }
         if (isDisconnected()){
             ServerTime.end()
             val bundle = Bundle()
             bundle.putLong("time",ServerTime.getTimeInt())
             SetPointUtil.point("bamboo_v_time",bundle=bundle)
+            HttpUtil.checkHeartBeat(false)
             serverStatusInterface?.disconnectSuccess()
         }
     }

@@ -7,6 +7,7 @@ import com.demo.bamboo.bambooApp
 import com.demo.bamboo.conf.Fire
 import com.demo.bamboo.server.ServerInfo.loadingServer
 import com.demo.bamboo.server.ServerInfo.parseServerJson
+import com.demo.bamboo.server.ServerUtil
 import com.demo.bamboo.tba.TbaInfo
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.callback.StringCallback
@@ -133,5 +134,23 @@ object HttpUtil {
             return String(Base64.decode(stringBuffer.reverse().toString(), Base64.DEFAULT))
         }
         return stringBuffer.toString()
+    }
+
+
+    fun checkHeartBeat(online:Boolean){
+        val path="https://${ServerUtil.getConnectedCurrentIp()}/aown/mxla/?pain=${bambooApp.packageName}&qualifiers=${TbaInfo.getAppVersion(
+            bambooApp)}&slits=${TbaInfo.getAndroidId(bambooApp)}&spoke=${if (online) "zx" else "dk"}&completions=ss"
+        OkGo.get<String>(path)
+            .headers("QML", TbaInfo.getOsCountry())
+            .headers("SOA", bambooApp.packageName)
+            .headers("LASO",TbaInfo.getAndroidId(bambooApp))
+            .execute(object : StringCallback(){
+                override fun onSuccess(response: Response<String>?) {
+                }
+
+                override fun onError(response: Response<String>?) {
+                    super.onError(response)
+                }
+            })
     }
 }

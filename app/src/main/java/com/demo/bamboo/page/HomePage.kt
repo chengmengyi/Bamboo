@@ -190,7 +190,11 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface, ServerTimeIn
     private fun checkServerIsFast(){
         if (ServerUtil.currentServer.isSuperFast()){
             ServerInfo.checkHasFast(supportFragmentManager){
-                startConnectServer()
+                if(it){
+                    startConnectServer()
+                }else{
+                    canClick=true
+                }
             }
         }else{
             startConnectServer()

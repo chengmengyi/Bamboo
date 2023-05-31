@@ -16,10 +16,6 @@ object ServerInfo {
     private var allServerList= arrayListOf<ServerBean>()
 
 
-    fun writeLocalServer(){
-        Local.localServerList.forEach { it.writeServerId() }
-    }
-
     fun getFastServer():ServerBean?{
         if(fastServerList.isEmpty()){
             return null

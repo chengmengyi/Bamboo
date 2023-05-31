@@ -1,6 +1,7 @@
 package com.demo.bamboo.server
 
 import com.demo.bamboo.interfaces.ServerTimeInterface
+import com.demo.bamboo.util.HttpUtil
 import kotlinx.coroutines.*
 import java.lang.Exception
 
@@ -27,6 +28,9 @@ object ServerTime {
             while (null!=job) {
                 interfaceList.forEach { it.connectTime(transTime(time)) }
                 time++
+                if(time%60==0L){
+                    HttpUtil.checkHeartBeat(true)
+                }
                 delay(1000L)
 
             }

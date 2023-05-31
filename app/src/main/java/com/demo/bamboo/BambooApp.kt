@@ -22,7 +22,7 @@ class BambooApp:Application() {
         MMKV.initialize(this)
         AppUtil.register(this)
         Fire.readFire()
-        ServerInfo.writeLocalServer()
+//        ServerInfo.writeLocalServer()
         UploadTba.uploadTba()
     }
 }

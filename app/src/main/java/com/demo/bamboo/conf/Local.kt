@@ -14,42 +14,42 @@ object Local {
     const val HOME="bamboo_next"
     const val RESULT="bamboo_wai"
 
-    val localCountryList= arrayListOf(
-        CountryBean(
-            countryName = "Japan",
-            cityName = "LocalTokyo",
-            cityId = 0,
-            isLocal = true
-        ),
-        CountryBean(
-            countryName = "UnitedStates",
-            cityName = "LocalNewYork",
-            cityId = 0,
-            isLocal = true
-        ),
-    )
-
-
-    val localServerList= arrayListOf(
-        ServerBean(
-            bamboo_ip = "100.223.52.78",
-            bamboo_por = 100,
-            bamboo_pd = "123456",
-            bamboo_enc = "chacha20-ietf-poly1305",
-            bamboo_ry = "Japan",
-            bamboo_ci = "LocalTokyo",
-            isLocal = true
-        ),
-        ServerBean(
-            bamboo_ip = "100.223.52.77",
-            bamboo_por = 100,
-            bamboo_pd = "123456",
-            bamboo_enc = "chacha20-ietf-poly1305",
-            bamboo_ry = "UnitedStates",
-            bamboo_ci = "LocalNewYork",
-            isLocal = true
-        ),
-    )
+//    val localCountryList= arrayListOf(
+//        CountryBean(
+//            countryName = "Japan",
+//            cityName = "LocalTokyo",
+//            cityId = 0,
+//            isLocal = true
+//        ),
+//        CountryBean(
+//            countryName = "UnitedStates",
+//            cityName = "LocalNewYork",
+//            cityId = 0,
+//            isLocal = true
+//        ),
+//    )
+//
+//
+//    val localServerList= arrayListOf(
+//        ServerBean(
+//            bamboo_ip = "100.223.52.78",
+//            bamboo_por = 100,
+//            bamboo_pd = "123456",
+//            bamboo_enc = "chacha20-ietf-poly1305",
+//            bamboo_ry = "Japan",
+//            bamboo_ci = "LocalTokyo",
+//            isLocal = true
+//        ),
+//        ServerBean(
+//            bamboo_ip = "100.223.52.77",
+//            bamboo_por = 100,
+//            bamboo_pd = "123456",
+//            bamboo_enc = "chacha20-ietf-poly1305",
+//            bamboo_ry = "UnitedStates",
+//            bamboo_ci = "LocalNewYork",
+//            isLocal = true
+//        ),
+//    )
 
 
     const val localAd3="""{
