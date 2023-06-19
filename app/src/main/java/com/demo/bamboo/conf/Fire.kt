@@ -12,12 +12,9 @@ import java.util.*
 
 
 object Fire {
-    private var bamboo_start="1"
-    private var bamboo_ratio="50"
     private var bamboo_ref="2"
     private var bamboo_k="1"
 
-    var isPlanB=false
     var isBlack=true
     var coldLoad=true
 
@@ -44,8 +41,6 @@ object Fire {
     private fun parseConfig(string: String){
         runCatching {
             val jsonObject = JSONObject(string)
-            bamboo_start=jsonObject.optString("bamboo_start")
-            bamboo_ratio=jsonObject.optString("bamboo_ratio")
             bamboo_ref=jsonObject.optString("bamboo_ref")
             bamboo_k=jsonObject.optString("bamboo_k")
         }
@@ -57,14 +52,6 @@ object Fire {
             return Local.localAd3
         }
         return ad
-    }
-
-    fun checkIsPlanB(){
-        isPlanB=false
-        if((coldLoad&&bamboo_start=="1")||bamboo_start=="2"){
-            val nextInt = Random().nextInt(100)
-            isPlanB = str2Int(bamboo_ratio)>=nextInt
-        }
     }
 
     fun checkBlackLimitInterAd(type:String)= (type==Local.CONNECT||type==Local.BACK)&&isBlack&& bamboo_k=="1"

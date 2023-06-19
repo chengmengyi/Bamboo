@@ -72,9 +72,6 @@ object ServerUtil: ShadowsocksConnection.Callback {
         if (isConnected()){
             lastServer= currentServer
             ServerTime.start()
-            if(autoConnect&&Fire.isPlanB){
-                LoadAdUtil.connectSuccessPlanB()
-            }
             HttpUtil.checkHeartBeat(true)
         }
         if (isDisconnected()){

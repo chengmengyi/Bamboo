@@ -52,26 +52,14 @@ class MainPage : BasePage() {
                             progress_view.progress = 100
                         },
                         close = {
-                            checkPlan()
+                            toHomeAc()
                         }
                     )
                 }else if (pro>=10){
-                    checkPlan()
+                    toHomeAc()
                 }
             }
             start()
-        }
-    }
-
-    private fun checkPlan(){
-        if(ReferUtil.isBuyUser()||ReferUtil.isFB()){
-            Fire.checkIsPlanB()
-            if(Fire.isPlanB){
-                SetPointUtil.point("bamboo_plan")
-            }
-            toHomeAc(autoConnect = Fire.isPlanB&&ServerUtil.isDisconnected())
-        }else{
-            toHomeAc()
         }
     }
 
