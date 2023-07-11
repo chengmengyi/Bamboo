@@ -13,11 +13,13 @@ class ShowFullAd(
 ) {
 
     fun showFull(emptyBack:Boolean=false,showing:()->Unit,close:()->Unit){
-        if(type!=Local.OPEN){
-            if(Fire.checkBlackLimitInterAd(type)||Fire.checkFireConfigLimitInterAd()){
-                close.invoke()
-                return
-            }
+        if (type==Local.BACK&&Fire.checkFireConfigLimitInterAd()){
+            close.invoke()
+            return
+        }
+        if(type!=Local.OPEN&&Fire.checkBlackLimitInterAd(type)){
+            close.invoke()
+            return
         }
         val ad = LoadAdUtil.getAdByType(type)
         if (null!=ad){

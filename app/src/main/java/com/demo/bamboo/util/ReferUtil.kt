@@ -2,6 +2,7 @@ package com.demo.bamboo.util
 
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
+import com.demo.bamboo.BuildConfig
 import com.demo.bamboo.bambooApp
 import com.tencent.mmkv.MMKV
 
@@ -31,6 +32,9 @@ object ReferUtil {
     }
 
     fun isBuyUser():Boolean{
+        if (BuildConfig.DEBUG){
+            return true
+        }
         val localReferrer = readLocalReferrer()
         return localReferrer.contains("fb4a")||
                 localReferrer.contains("gclid")||
@@ -41,6 +45,9 @@ object ReferUtil {
 
 
     fun isFB():Boolean{
+        if (BuildConfig.DEBUG){
+            return true
+        }
         val localReferrer = readLocalReferrer()
         return localReferrer.contains("fb4a")|| localReferrer.contains("facebook")
     }

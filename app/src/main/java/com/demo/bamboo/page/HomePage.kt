@@ -240,7 +240,7 @@ class HomePage:BasePage(), ServerStatusInterface, AppHomeInterface, ServerTimeIn
                                 }
                             )
                         }else{
-                            if(LimitUtil.hasLimit()||Fire.checkBlackLimitInterAd(Local.CONNECT)||Fire.checkFireConfigLimitInterAd()){
+                            if(LimitUtil.hasLimit()||Fire.checkBlackLimitInterAd(Local.CONNECT)){
                                 cancel()
                                 connectJobFinish(connect)
                             }

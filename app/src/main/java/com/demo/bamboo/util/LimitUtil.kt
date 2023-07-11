@@ -1,5 +1,6 @@
 package com.demo.bamboo.util
 
+import com.demo.bamboo.BuildConfig
 import com.demo.bamboo.conf.Fire
 import com.tencent.mmkv.MMKV
 import org.json.JSONObject
